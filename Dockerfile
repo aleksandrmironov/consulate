@@ -7,7 +7,9 @@ ENV CONSUL_VERSION=0.7.2
 # Install debian deps
 RUN apt-get update && apt-get install -y \
   curl \
-  unzip &&\
+  unzip \
+  jq \
+  awscli &&\
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* *.gz
 
@@ -29,6 +31,10 @@ RUN mkdir -p $GOPATH/src/github.com/kadaan && \
 # Copy consulate to a bin directory
 RUN mv $GOPATH/bin/consulate /usr/bin
 
+# add entrypoint
+ADD entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+
 USER nobody
 
-ENTRYPOINT [ "consulate", "server" ]
+ENTRYPOINT [ "/entrypoint.sh" ]
